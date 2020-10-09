@@ -9,9 +9,9 @@ namespace MyBox.Internal
 	[Serializable]
 	public class MyBoxSettings : ScriptableObject
 	{
-		[SerializeField] private bool _autoSaveEnabled = true;
-		[SerializeField] private bool _cleanEmptyDirectoriesFeature = true;
-		[SerializeField] private bool _prepareOnPlaymode = true;
+		[SerializeField] private bool _autoSaveEnabled = false;
+		[SerializeField] private bool _cleanEmptyDirectoriesFeature = false;
+		[SerializeField] private bool _prepareOnPlaymode = false;
 		[SerializeField] private bool _checkForUpdates = true;
 
 		public static bool AutoSaveEnabled
