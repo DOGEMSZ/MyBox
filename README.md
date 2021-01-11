@@ -1,6 +1,6 @@
 # MyBox
 
-[![openupm](https://img.shields.io/npm/v/com.mybox?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.mybox/)
+[![openupm](https://img.shields.io/npm/v/com.domybest.mybox?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.domybest.mybox/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/Deadcows/MyBox/blob/master/LICENSE.md)
 
 MyBox is a set of tools, features and extensions for Unity.<br />
@@ -14,13 +14,13 @@ It is MyBox. Now it's yours too :raised_hands:<br />
 The package is available on the [openupm registry](https://openupm.com). You may install it via [openupm-cli](https://github.com/openupm/openupm-cli).
 
 ```
-openupm add com.mybox
+openupm add com.domybest.mybox
 ```
 
 ### Install via Git URL
 You may install MyBox via <b>Unity Package Manager</b>:<br />
 Open Packages/manifest.json file in your project folder and put this line along with other dependencies<br />
-<pre>"com.mybox": "https://github.com/Deadcows/MyBox.git"</pre>
+<pre>"com.domybest.mybox": "https://github.com/Deadcows/MyBox.git"</pre>
 Note how the comma lies at the end of every line in dependencies, except of the last line!
 
 To update, use Tools->MyBox->MyBox Window<br />
