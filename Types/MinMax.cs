@@ -161,19 +161,35 @@ namespace MyBox
 		#region RandomInRange
 
 		/// <summary>
-		/// Lerp from Min to Max
+		/// Return a random int within [minInclusive..maxExclusive)
 		/// </summary>
-		public static float RandomInRange(this MinMaxInt minMax)
+		public static int RandomInRange(this MinMaxInt minMax)
 		{
 			return Random.Range(minMax.Min, minMax.Max);
 		}
 		
 		/// <summary>
-		/// Lerp from Min to Max
+		/// Return a random int within [minInclusive..maxExclusive)
 		/// </summary>
 		public static float RandomInRange(this MinMaxFloat minMax)
 		{
 			return Random.Range(minMax.Min, minMax.Max);
+		}
+		
+		/// <summary>
+		/// Return a random int within [minInclusive..maxInclusive]
+		/// </summary>
+		public static int RandomInRangeInclusive(this MinMaxInt minMax)
+		{
+			return Random.Range(minMax.Min, minMax.Max + 1);
+		}
+		
+		/// <summary>
+		/// Return a random int within [minInclusive..maxInclusive]
+		/// </summary>
+		public static float RandomInRangeInclusive(this MinMaxFloat minMax)
+		{
+			return Random.Range(minMax.Min, minMax.Max + 1);
 		}
 
 		#endregion
