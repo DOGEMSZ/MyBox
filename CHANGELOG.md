@@ -2,14 +2,23 @@
 All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
-- Added: OverrideLabelAttribute // TODO: DONT FORGET TO ADD DOCS MAN!
+- Breaking Changes: MyCollections.AsEnumerable renamed to SingleToEnumerable
+- Breaking Changes: MyCollections.GetOrDefault renamed to GetOrAdd
+- Breaking Changes: MyCollections.SelectWithIndex and SelectManyWithIndex removed (Linq.Select and SelectMany functionality duplication)
+- Added: TransformData type to store and restore position, rotation and scale
+- Added: OverrideLabelAttribute
+- Added: Ability to use AutoPropertyAttribute to assign from parent, scene of asset folder, thanks to @tonygiang!
 - Added: ConditionalFields supports Enum Flag as conditions! Thanks to Dietmar Puschmann for this addition
 - Added: MyEditorEvents.OnEditorStarts event
+- Added: UnityEvent inspector now is foldable, thanks to @karsion!
 - Extensions: MyCollections.FirstIndex - more generalized version 
 - Extensions: MyCollections.SelectWithIndex and SelectManyWithIndex - like LINQ.Select, but with index passed along the item into selector
 - Extensions: MyCollections.GetWeightedRandom and GetWeightedRandomIndex
+- Changed: AutoPropertyAttribute will also check prefabs on prefab mode open
 - Changed: MyBox will only check for updates when editor opens
+- Fix: DisplayInspectorAttribute works better with (and inside of) collections
 - Fix: MyString.ToCamelCase() extension works better now, thanks to @derfium!
+- Fix: MinValue/MaxValueAttribute build warnings fixed
 
 ## [1.6.2] - 2021-04-08
 - Fix: MyBox Window settings were not applied correctly

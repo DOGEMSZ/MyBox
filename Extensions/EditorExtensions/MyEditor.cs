@@ -267,6 +267,21 @@ namespace MyBox.EditorTools
 
 		#endregion
 
+		/// <summary>
+		/// Force Unity Editor to load lazily-loaded types such as ScriptableObject.
+		/// </summary>
+		public static void LoadAllAssetsOfType(Type type) => AssetDatabase
+			.FindAssets($"t:{type.FullName}")
+			.Select(AssetDatabase.GUIDToAssetPath)
+			.ForEach(p => AssetDatabase.LoadAssetAtPath(p, type));
+
+		/// <summary>
+		/// Force Unity Editor to load lazily-loaded types such as ScriptableObject.
+		/// </summary>
+		public static void LoadAllAssetsOfType(string typeName) => AssetDatabase
+			.FindAssets($"t:{typeName}")
+			.Select(AssetDatabase.GUIDToAssetPath)
+			.ForEach(p => AssetDatabase.LoadAssetAtPath(p, typeof(UnityEngine.Object)));
 
 		public static void CopyToClipboard(string text)
 		{
