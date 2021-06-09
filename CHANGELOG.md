@@ -2,10 +2,19 @@
 All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
+
+
+## [1.7.0] - 2021-06-09
 - Breaking Changes: MyCollections.AsEnumerable renamed to SingleToEnumerable
 - Breaking Changes: MyCollections.GetOrDefault renamed to GetOrAdd
 - Breaking Changes: MyCollections.SelectWithIndex and SelectManyWithIndex removed (Linq.Select and SelectMany functionality duplication)
+- Breaking Changes: MonoSingleton class is removed, its functionality combined with Singleton class
+- Breaking Changes: WaitForUnscaledSeconds is removed since we have WaitForSecondsRealtime (whow, it's here since Unity 5.4! Nostalgic memories :D)
+- Breaking Changes: UIImageBasedToggle removed. Unity's Toggle able to do same things this days
+- Added: Donation button in MyBox window ;)
 - Added: TransformData type to store and restore position, rotation and scale
+- Added: CharactersRange Attribute to validate string by set of characters
+- Added: RegexString Attribute to validate string by Regular Expression
 - Added: OverrideLabelAttribute
 - Added: Ability to use AutoPropertyAttribute to assign from parent, scene of asset folder, thanks to @tonygiang!
 - Added: ConditionalFields supports Enum Flag as conditions! Thanks to Dietmar Puschmann for this addition
@@ -16,6 +25,8 @@ All notable changes to this package will be documented in this file.
 - Extensions: MyCollections.GetWeightedRandom and GetWeightedRandomIndex
 - Changed: AutoPropertyAttribute will also check prefabs on prefab mode open
 - Changed: MyBox will only check for updates when editor opens
+- Changed: Singleton now might be used as parent class of MonoBehaviour to cache and remove duplicating instances
+- Changed: UIImageBasedButton now uses Highlight sprites when Pointed
 - Fix: DisplayInspectorAttribute works better with (and inside of) collections
 - Fix: MyString.ToCamelCase() extension works better now, thanks to @derfium!
 - Fix: MinValue/MaxValueAttribute build warnings fixed
