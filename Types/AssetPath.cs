@@ -5,6 +5,12 @@ namespace MyBox
 	[Serializable]
 	public class AssetPath
 	{
+		public AssetPath() { }
+		public AssetPath(string path, string extension)
+        {
+			Path = path;
+			Extension = extension;
+        }
 		public string Path;
 		public string Extension;
 

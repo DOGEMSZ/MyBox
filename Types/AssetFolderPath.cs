@@ -5,6 +5,11 @@ namespace MyBox
 	[Serializable]
 	public class AssetFolderPath
 	{
+		public AssetFolderPath() { }
+		public AssetFolderPath(string defaultPath)
+        {
+			Path = defaultPath;
+        }
 		public string Path;
 	}
 }
