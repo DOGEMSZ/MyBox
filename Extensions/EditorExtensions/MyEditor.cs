@@ -217,7 +217,19 @@ namespace MyBox.EditorTools
 				foreach (var gameObject in root)
 				{
 					var behaviours = gameObject.GetComponentsInChildren<MonoBehaviour>(true);
-					foreach (var behaviour in behaviours) components.Add(behaviour);
+					foreach (var behaviour in behaviours)
+					{
+						try
+						{
+							components.Add(behaviour);
+						}
+						catch (Exception e)
+						{
+							Debug.LogError(e.Message + "\n" + e.StackTrace, behaviour);
+							throw;
+						}
+					}
+					
 				}
 			}
 
