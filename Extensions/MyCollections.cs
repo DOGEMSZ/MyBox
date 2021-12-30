@@ -461,7 +461,7 @@ namespace MyBox
 		/// <summary>
 		/// Shuffles a collection in place using the Knuth algorithm.
 		/// </summary>
-		public static IList<T> Shuffle<T>(this IList<T> source)
+		/*public static IList<T> Shuffle<T>(this IList<T> source)
 		{
 			for (int i = 0; i < source.Count - 1; ++i)
 			{
@@ -469,6 +469,6 @@ namespace MyBox
 				source.SwapInPlace(i, indexToSwap);
 			}
 			return source;
-		}
+		}*/
 	}
 }
