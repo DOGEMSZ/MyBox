@@ -6,8 +6,8 @@ namespace MyBox.Internal
 {
     public static class MyLogger
     {
-        private const string LogFile = "customLog.txt";
-        private const string TimeFormat = "MM-dd_HH-mm-ss";
+        private static string LogFile = "customLog.txt";
+        private static string TimeFormat = "MM-dd_HH-mm-ss";
 
         public static bool Disabled;
 
@@ -19,16 +19,22 @@ namespace MyBox.Internal
 
         static MyLogger()
         {
-            Session = Guid.NewGuid().ToString();
-            Version = "Version not initiated";
-
-            AppDomain.CurrentDomain.UnhandledException += (sender, args) => Log(args.ExceptionObject as Exception);
-            Application.logMessageReceived +=
-                (condition, trace, type) => Log(string.Format("Console Log ({0}): {1}{2}{3}", type, condition, Environment.NewLine, trace));
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) => LogException(args.ExceptionObject as Exception);
+            Application.logMessageReceived += (condition, trace, type) => Log($"Console Log ({type}): {condition}{Environment.NewLine}{trace}");
         }
 
+        public static void InitializeSession(string version = null, string filename = "customLog.txt", string timeFormat = "MM-dd_HH-mm-ss")
+        {
+            Session = Guid.NewGuid().ToString();
+            Version = version ?? string.Empty;
 
-        public static void Log(string text)
+            LogFile = filename;
+            TimeFormat = timeFormat;
+            
+            Log("Initialized. " + version);
+        } 
+        
+        public static void Log(string text, bool withStackTrace = false)
         {
             if (Application.isEditor) return;
             if (Disabled) return;
@@ -36,7 +42,7 @@ namespace MyBox.Internal
             string path = Path.Combine(Application.dataPath, LogFile);
 
             if (text.Length > MaxMessageLength) text = text.Substring(0, MaxMessageLength) + "...<trimmed>";
-
+            if (withStackTrace) text += Environment.NewLine + Environment.StackTrace;
             try
             {
                 if (!File.Exists(path))
@@ -59,14 +65,12 @@ namespace MyBox.Internal
             {
                 Debug.LogException(ex);
             }
+            
+            string GetCurrentTime() => DateTime.Now.ToString(TimeFormat);
         }
 
-        private static string GetCurrentTime()
-        {
-            return DateTime.Now.ToString(TimeFormat);
-        }
 
-        private static void Log(Exception ex)
+        private static void LogException(Exception ex)
         {
             Log("Exception:" + Environment.NewLine + ex.Message + Environment.NewLine + ex.StackTrace);
         }

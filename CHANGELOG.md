@@ -2,12 +2,35 @@
 All notable changes to this package will be documented in this file.
 
 ## [Unreleased]
-
+- Breaking Changes: MyDelayedActions.DelayedAction methods now start themselves automatically
+- Breaking Changes: MinMaxFloat.RandomInRangeInclusive was redundant, removed
+- Breaking Changes: Extension IList.GetRandomCollection is removed, replaced with IList.ExclusiveSample
+- Breaking Changes: Removed bunch of methods from MyPhysics class 
+TODO Docs - Added: Ability to disable performant features of MyBox in MyBox Window
+TODO Docs - Added: PlayerPrefs and EditorPrefs Bool/Float/Int/String/Vector3 types
+- Changed: ReadOnlyAttribute now might be conditional, just like ConditionalField. Thanks to @CrizGames!
+- Changed: AutoProperty and MustBeAssigned attributes now work fine with ScriptableObjects! Thanks to @tonygiang for the addition!
+TODO Docs - Changed: SceneAttribute is now rendered as popup list of scenes from Editor Build Settings
+- Extensions: collection.FillBy(index => { }) allows to use factory method to fill up the collection. Thanks to @tonygiang!
+- Extensions: IList.SwapInPlace(a, b) swaps two elements in collection. Thanks to @tonygiang!
+- Extensions: IList.Shuffle() shuffles elements in collection using the Knuth algorithm. Thanks to @tonygiang!
+- Extensions: IList.ExclusiveSample() returns collection of random elements. Thanks to @tonygiang!
+- Extensions: Rigidbody.ToggleConstraints extension. Thanks to @tonygiang!
+- Extensions: Transform.SetLossyScale. Thanks to @tonygiang!
+- Extensions: Camera.WorldPointOffsetByDepth to keep point position on screen but with specified distance from camera. Thanks to @tonygiang!
+- Extensions: Component/GameObject.SetLayerRecursively. Thanks to @tonygiang!
+- Extensions: RectTransform.ShiftAnchor to offset anchor. Thanks to @tonygiang!
+- Extensions: RectTransform.GetAnchorCenter to get mid point between anchorMin and anchorMax. Thanks to @tonygiang!
+- Extensions: RectTransform.GetAnchorDelta to get parent-relative size of the RectTransform. Thanks to @tonygiang!
+- Extensions: Vector.Pow to raise each component of the source Vector to the specified power. Thanks to @tonygiang!
+- Extensions: Vector.ScaleBy immutably returns the result of the source vector multiplied with another vector. Thanks to @tonygiang!
+- Fix: FPSCounter now works correctly if EditorOnly is toggled. Thanks to @TheWalruzz!
+TODO Docs - Fix: DisplayInspector now will show warning if used on property of the wrong type
+TODO Docs - Fix: FoldoutAttribute visual improvements
 
 ## [1.7.0] - 2021-06-09
 - Breaking Changes: MyCollections.AsEnumerable renamed to SingleToEnumerable
 - Breaking Changes: MyCollections.GetOrDefault renamed to GetOrAdd
-- Breaking Changes: MyCollections.SelectWithIndex and SelectManyWithIndex removed (Linq.Select and SelectMany functionality duplication)
 - Breaking Changes: MonoSingleton class is removed, its functionality combined with Singleton class
 - Breaking Changes: WaitForUnscaledSeconds is removed since we have WaitForSecondsRealtime (whow, it's here since Unity 5.4! Nostalgic memories :D)
 - Breaking Changes: UIImageBasedToggle removed. Unity's Toggle able to do same things this days
@@ -21,7 +44,6 @@ All notable changes to this package will be documented in this file.
 - Added: MyEditorEvents.OnEditorStarts event
 - Added: UnityEvent inspector now is foldable, thanks to @karsion!
 - Extensions: MyCollections.FirstIndex - more generalized version 
-- Extensions: MyCollections.SelectWithIndex and SelectManyWithIndex - like LINQ.Select, but with index passed along the item into selector
 - Extensions: MyCollections.GetWeightedRandom and GetWeightedRandomIndex
 - Changed: AutoPropertyAttribute will also check prefabs on prefab mode open
 - Changed: MyBox will only check for updates when editor opens

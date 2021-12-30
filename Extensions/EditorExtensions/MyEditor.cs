@@ -29,7 +29,7 @@ namespace MyBox.EditorTools
 			EditorApplication.ExecuteMenuItem("Window/General/Hierarchy");
 			var window = EditorWindow.focusedWindow;
 
-			methodInfo.Invoke(window, new object[] {go.GetInstanceID(), expand});
+			methodInfo.Invoke(window, new object[] { go.GetInstanceID(), expand });
 		}
 
 		/// <summary>
@@ -142,8 +142,8 @@ namespace MyBox.EditorTools
 
 			var egu = typeof(EditorGUIUtility);
 			var flags = BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.NonPublic;
-			var args = new object[] {gameObject, icons[iconIndex].image};
-			var setIconMethod = egu.GetMethod("SetIconForObject", flags, null, new[] {typeof(Object), typeof(Texture2D)}, null);
+			var args = new object[] { gameObject, icons[iconIndex].image };
+			var setIconMethod = egu.GetMethod("SetIconForObject", flags, null, new[] { typeof(Object), typeof(Texture2D) }, null);
 			if (setIconMethod != null) setIconMethod.Invoke(null, args);
 		}
 
@@ -164,46 +164,99 @@ namespace MyBox.EditorTools
 		#region Get Fields With Attribute
 
 		/// <summary>
-		/// Get all fields with specified attribute on all Components on scene/prefab
+		/// Get all fields with specified attribute on all Unity Objects
 		/// </summary>
-		public static ComponentField[] GetFieldsWithAttribute<T>(GameObject prefab = null) where T : Attribute
+		public static List<ObjectField> GetFieldsWithAttributeFromScenes<T>() where T : Attribute
 		{
-			var allComponents = prefab == null ? 
-				GetAllBehavioursInScenes() : 
-				prefab.GetComponentsInChildren<MonoBehaviour>(); 
+			var allObjects = GetAllBehavioursInScenes();
 
-			var fields = new List<ComponentField>();
+			// ReSharper disable once CoVariantArrayConversion
+			return GetFieldsWithAttribute<T>(allObjects);
+		}
+		
+		/// <summary>
+		/// Get all fields with specified attribute on all Unity Objects
+		/// </summary>
+		public static List<ObjectField> GetFieldsWithAttributeFromAll<T>() where T : Attribute
+		{
+			var allObjects = GetAllUnityObjects();
 
-			foreach (var component in allComponents)
-			{
-				if (component == null) continue;
-			
-				Type typeOfScript = component.GetType();
-				var matchingFields = typeOfScript
-					.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-					.Where(field => field.IsDefined(typeof(T), false));
-				foreach (var matchingField in matchingFields) fields.Add(new ComponentField(matchingField, component));
-			}
+			return GetFieldsWithAttribute<T>(allObjects);
+		}
+		
+		/// <summary>
+		/// Get all fields with specified attribute from Prefab Root GO
+		/// </summary>
+		public static List<ObjectField> GetFieldsWithAttribute<T>(GameObject root) where T : Attribute
+		{
+			var allObjects = root.GetComponentsInChildren<MonoBehaviour>();
 
-			return fields.ToArray();
+			// ReSharper disable once CoVariantArrayConversion
+			return GetFieldsWithAttribute<T>(allObjects);
 		}
 
-		public struct ComponentField
+		/// <summary>
+		/// Get all fields with specified attribute from set of Unity Objects
+		/// </summary>
+		public static List<ObjectField> GetFieldsWithAttribute<T>(Object[] objects) where T : Attribute
+		{
+			var desiredAttribute = typeof(T);
+			var result = new List<ObjectField>();
+			foreach (var o in objects)
+			{
+				if (o == null) continue;
+				var fields = o.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+				foreach (var field in fields)
+				{
+					if (!field.IsDefined(desiredAttribute, false)) continue;
+					result.Add(new ObjectField(field, o));
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Get all Components in the same scene as a specified GameObject,
+		/// including inactive components.
+		/// </summary>
+		public static IEnumerable<Component> GetAllComponentsInSceneOf(Object obj,
+			Type type)
+		{
+			GameObject contextGO;
+			if (obj is Component comp) contextGO = comp.gameObject;
+			else if (obj is GameObject go) contextGO = go;
+			else return Array.Empty<Component>();
+			if (contextGO.scene.isLoaded) return contextGO.scene.GetRootGameObjects()
+				.SelectMany(rgo => rgo.GetComponentsInChildren(type, true));
+			return Array.Empty<Component>();
+		}
+
+		public struct ObjectField
 		{
 			public readonly FieldInfo Field;
-			public readonly Component Component;
+			public readonly Object Context;
 
-			public ComponentField(FieldInfo field, Component component)
+			public ObjectField(FieldInfo field, Object context)
 			{
 				Field = field;
-				Component = component;
+				Context = context;
 			}
 		}
 
 		/// <summary>
+		/// Get every assets possible, including lazily-loaded assets.
+		/// </summary>
+		public static Object[] GetAllUnityObjects()
+		{
+			LoadAllAssetsOfType(typeof(ScriptableObject));
+			LoadAllAssetsOfType("Prefab");
+			return Resources.FindObjectsOfTypeAll(typeof(Object));
+		}
+		
+		/// <summary>
 		/// It's like FindObjectsOfType, but allows to get disabled objects
 		/// </summary>
-		/// <returns></returns>
 		public static MonoBehaviour[] GetAllBehavioursInScenes()
 		{
 			var components = new List<MonoBehaviour>();
@@ -238,7 +291,7 @@ namespace MyBox.EditorTools
 
 		#endregion
 
-		
+
 		#region Get Script Asseet Path
 
 		/// <summary>
@@ -258,7 +311,7 @@ namespace MyBox.EditorTools
 			var assetsPath = GetRelativeScriptAssetsPath(so);
 			return new FileInfo(assetsPath).DirectoryName;
 		}
-		
+
 		/// <summary>
 		/// Get relative to Assets folder path to script file location
 		/// </summary>
@@ -284,16 +337,14 @@ namespace MyBox.EditorTools
 		/// </summary>
 		public static void LoadAllAssetsOfType(Type type) => AssetDatabase
 			.FindAssets($"t:{type.FullName}")
-			.Select(AssetDatabase.GUIDToAssetPath)
-			.ForEach(p => AssetDatabase.LoadAssetAtPath(p, type));
+			.ForEach(p => AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(p), type));
 
 		/// <summary>
 		/// Force Unity Editor to load lazily-loaded types such as ScriptableObject.
 		/// </summary>
 		public static void LoadAllAssetsOfType(string typeName) => AssetDatabase
 			.FindAssets($"t:{typeName}")
-			.Select(AssetDatabase.GUIDToAssetPath)
-			.ForEach(p => AssetDatabase.LoadAssetAtPath(p, typeof(UnityEngine.Object)));
+			.ForEach(p => AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(p), typeof(UnityEngine.Object)));
 
 		public static void CopyToClipboard(string text)
 		{

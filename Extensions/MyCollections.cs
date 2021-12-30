@@ -92,61 +92,39 @@ namespace MyBox
 			return collection.ElementAt(UnityEngine.Random.Range(0, collection.Count()));
 		}
 
-
-
-		public static T[] GetRandomCollection<T>(this IList<T> collection, int amount)
-		{
-			if (amount > collection.Count)
-			{
-				Debug.LogError("GetRandomCollection Caused: source collection items count is less than randoms count");
-				return null;
-			}
-
-			var randoms = new T[amount];
-			var indexes = Enumerable.Range(0, amount).ToList();
-
-			for (var i = 0; i < amount; i++)
-			{
-				var random = UnityEngine.Random.Range(0, indexes.Count);
-				randoms[i] = collection[random];
-				indexes.RemoveAt(random);
-			}
-
-			return randoms;
-		}
-
-
-
+		#region IsNullOrEmpty and NotNullOrEmpty
+		
 		/// <summary>
 		/// Is array null or empty
 		/// </summary>
-		public static bool IsNullOrEmpty<T>(this T[] collection)
-		{
-			if (collection == null) return true;
-
-			return collection.Length == 0;
-		}
+		public static bool IsNullOrEmpty<T>(this T[] collection) => collection == null || collection.Length == 0;
 
 		/// <summary>
 		/// Is list null or empty
 		/// </summary>
-		public static bool IsNullOrEmpty<T>(this IList<T> collection)
-		{
-			if (collection == null) return true;
-
-			return collection.Count == 0;
-		}
+		public static bool IsNullOrEmpty<T>(this IList<T> collection) => collection == null || collection.Count == 0;
 
 		/// <summary>
 		/// Is collection null or empty. IEnumerable is relatively slow. Use Array or List implementation if possible
 		/// </summary>
-		public static bool IsNullOrEmpty<T>(this IEnumerable<T> collection)
-		{
-			if (collection == null) return true;
+		public static bool IsNullOrEmpty<T>(this IEnumerable<T> collection) => collection == null || !collection.Any();
 
-			return !collection.Any();
-		}
-
+		/// <summary>
+		/// Collection is not null or empty
+		/// </summary>
+		public static bool NotNullOrEmpty<T>(this T[] collection) => !collection.IsNullOrEmpty();
+		
+		/// <summary>
+		/// Collection is not null or empty
+		/// </summary>
+		public static bool NotNullOrEmpty<T>(this IList<T> collection) => !collection.IsNullOrEmpty();
+		
+		/// <summary>
+		/// Collection is not null or empty
+		/// </summary>
+		public static bool NotNullOrEmpty<T>(this IEnumerable<T> collection) => !collection.IsNullOrEmpty();
+		
+		#endregion
 
 
 		/// <summary>
@@ -422,5 +400,75 @@ namespace MyBox
 		public static T GetWeightedRandom<T>(this IEnumerable<T> source,
 			Func<T, double> weightSelector) =>
 			source.ElementAt(source.GetWeightedRandomIndex(weightSelector));
+		
+
+		/// <summary>
+		/// Fills a collection with values generated using a factory function that
+		/// passes along their index numbers.
+		/// </summary>
+		public static IList<T> FillBy<T>(this IList<T> source,
+			Func<int, T> valueFactory)
+		{
+			for (int i = 0; i < source.Count; ++i) source[i] = valueFactory(i);
+			return source;
+		}
+
+		/// <summary>
+		/// Fills an array with values generated using a factory function that
+		/// passes along their index numbers.
+		/// </summary>
+		public static T[] FillBy<T>(this T[] source,
+			Func<int, T> valueFactory)
+		{
+			for (int i = 0; i < source.Length; ++i) source[i] = valueFactory(i);
+			return source;
+		}
+
+		/// <summary>
+		/// Randomly samples a non-repeating number of elements from the source
+		/// collection.
+		/// </summary>
+		public static T[] ExclusiveSample<T>(this IList<T> source,
+			int sampleNumber)
+		{
+			if (sampleNumber > source.Count)
+				throw new ArgumentOutOfRangeException("Cannot sample more elements than what the source collection contains");
+			var results = new T[sampleNumber];
+			int resultIndex = 0;
+			for (int i = 0; i < source.Count && resultIndex < sampleNumber; ++i)
+			{
+				var probability = (double)(sampleNumber - resultIndex)
+					/ (source.Count - i);
+				if (MyCommonConstants.SystemRandom.NextDouble() < probability)
+				{ results[resultIndex] = source[i]; ++resultIndex; }
+			}
+			return results;
+		}
+
+		/// <summary>
+		/// Swaps 2 elements at the specified index positions in place.
+		/// </summary>
+		public static IList<T> SwapInPlace<T>(this IList<T> source,
+			int index1,
+			int index2)
+		{
+			var e1 = source[index1];
+			source[index1] = source[index2];
+			source[index2] = e1;
+			return source;
+		}
+
+		/// <summary>
+		/// Shuffles a collection in place using the Knuth algorithm.
+		/// </summary>
+		public static IList<T> Shuffle<T>(this IList<T> source)
+		{
+			for (int i = 0; i < source.Count - 1; ++i)
+			{
+				var indexToSwap = UnityEngine.Random.Range(i, source.Count);
+				source.SwapInPlace(i, indexToSwap);
+			}
+			return source;
+		}
 	}
 }
